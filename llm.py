@@ -1,3 +1,5 @@
+# from origin/llm.py
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, FewShotChatMessagePromptTemplate
 from langchain_classic.chains import create_history_aware_retriever, create_retrieval_chain
@@ -10,10 +12,9 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
-from config import answer_examples
+from origin.config import answer_examples
 
 store = {}
-
 
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
@@ -22,8 +23,8 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def get_retriever():
-    embedding = OpenAIEmbeddings(model='text-embedding-3-large')
-    index_name = 'tax-markdown-index'
+    embedding = OpenAIEmbeddings(model="text-embedding-3-large", dimensions=1024)
+    index_name = "tax-markdown-index"
     database = PineconeVectorStore.from_existing_index(index_name=index_name, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4})
     return retriever
@@ -54,7 +55,7 @@ def get_history_retriever():
     return history_aware_retriever
 
 
-def get_llm(model='gpt-4o'):
+def get_llm(model='gpt-4o-mini'):
     llm = ChatOpenAI(model=model)
     return llm
 
